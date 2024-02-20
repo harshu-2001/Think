@@ -24,7 +24,7 @@
             android:layout_below="@id/text_view_priority"
             android:text="Friday, 4 April, 2020"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="14dp"
+            android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

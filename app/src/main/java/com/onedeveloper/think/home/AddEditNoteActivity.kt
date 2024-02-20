@@ -2,17 +2,21 @@ package com.onedeveloper.think.home
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
 import com.onedeveloper.think.R
+import com.onedeveloper.think.constants.GlobalConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -22,6 +26,7 @@ class AddEditNoteActivity : AppCompatActivity() {
     private var editTextTitle: TextInputEditText? = null
     private var editTextDescription: TextInputEditText? = null
     private var spinnerPriority: Spinner? = null
+    private var mCardView :LinearLayout ? =null
 
     //private String currentDate;
     protected override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +44,7 @@ class AddEditNoteActivity : AppCompatActivity() {
         spinnerPriority = findViewById<Spinner>(R.id.spinnerPriority)
         tvDate = findViewById<TextView>(R.id.tv_date)
         tvTime = findViewById<TextView>(R.id.tv_time)
+        mCardView = findViewById(R.id.cardView)
         getSupportActionBar()?.setHomeAsUpIndicator(R.drawable.ic_close)
         val intent: Intent = getIntent()
         if (intent.hasExtra(EXTRA_ID)) {
@@ -47,6 +53,7 @@ class AddEditNoteActivity : AppCompatActivity() {
             editTextDescription?.setText(intent.getStringExtra(EXTRA_DESCRIPTION))
             tvDate?.setText(intent.getStringExtra(EXTRA_DATE))
             tvTime?.setText(intent.getStringExtra(EXTRA_TIME))
+            mCardView?.setBackgroundColor(Color.parseColor(intent.getStringExtra(EXTRA_COLOR)))
             //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.priorityList,R.layout.style_spinner);
             val array = arrayOf("High", "Medium", "Low")
             val adapter: ArrayAdapter<String> =
@@ -72,6 +79,7 @@ class AddEditNoteActivity : AppCompatActivity() {
         val priority = spinnerPriority!!.selectedItem.toString()
         val date: String = tvDate?.getText().toString()
         val time: String = tvTime?.getText().toString()
+        val color:String = mCardView?.background.toString()
         if (title.trim { it <= ' ' }.isEmpty() || description.trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(this, "Please insert a title and description", Toast.LENGTH_SHORT).show()
             return
@@ -83,6 +91,7 @@ class AddEditNoteActivity : AppCompatActivity() {
         data.putExtra(EXTRA_PRIORITY_NUMBER, spinnerPriority!!.selectedItem.toString())
         data.putExtra(EXTRA_DATE, date)
         data.putExtra(EXTRA_TIME, time)
+        data.putExtra(EXTRA_COLOR,color)
         var priorityNumber = 0
         if (priority == "High") {
             priorityNumber = 3
@@ -118,12 +127,13 @@ class AddEditNoteActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_ID = "com.example.achitectureexample.EXTRA_ID"
-        const val EXTRA_TITLE = "com.example.achitectureexample.EXTRA_TITLE"
-        const val EXTRA_DESCRIPTION = "com.example.achitectureexample.EXTRA_DESCRIPTION"
-        const val EXTRA_PRIORITY = "com.example.achitectureexample.EXTRA_PRIORITY"
-        const val EXTRA_PRIORITY_NUMBER = "com.example.achitectureexample.EXTRA_PRIORITY_NUMBER"
-        const val EXTRA_DATE = "com.example.achitectureexample.EXTRA_DATE"
-        const val EXTRA_TIME = "com.example.achitectureexample.EXTRA_TIME"
+        const val EXTRA_ID = "com.example.counterexample.EXTRA_ID"
+        const val EXTRA_TITLE = "com.example.counterexample.EXTRA_TITLE"
+        const val EXTRA_DESCRIPTION = "com.example.counterexample.EXTRA_DESCRIPTION"
+        const val EXTRA_PRIORITY = "com.example.counterexample.EXTRA_PRIORITY"
+        const val EXTRA_PRIORITY_NUMBER = "com.example.counterexample.EXTRA_PRIORITY_NUMBER"
+        const val EXTRA_DATE = "com.example.counterexample.EXTRA_DATE"
+        const val EXTRA_TIME = "com.example.counterexample.EXTRA_TIME"
+        const val EXTRA_COLOR = "com.example.counterexample.EXTRA_COLOR"
     }
 }

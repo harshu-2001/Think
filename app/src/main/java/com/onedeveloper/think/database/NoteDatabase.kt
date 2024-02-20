@@ -6,6 +6,7 @@ import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.onedeveloper.think.constants.GlobalConstants
 import com.onedeveloper.think.model.Note
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -38,9 +39,8 @@ abstract class NoteDatabase : RoomDatabase() {
             val date = dateFormat.format(calendar.time)
             val ntime = timeFormat.format(calendar.time)
             val time = ntime.replace("am", "AM").replace("pm", "PM")
-            noteDao.insert(Note("Title 1", "Description 1", "High", 3, date, time))
-            noteDao.insert(Note("Title 2", "Description 2", "Medium", 2, date, time))
-            noteDao.insert(Note("Title 3", "Description 3", "Low", 1, date, time))
+            val color = GlobalConstants.colors.random()
+            noteDao.insert(Note("Title 1", "Description 1", "High", 3, date, time,color))
             return null
         }
 

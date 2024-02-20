@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.onedeveloper.think.R
+import com.onedeveloper.think.constants.GlobalConstants
 import com.onedeveloper.think.model.Note
 
 
 class NoteAdapter : ListAdapter<Note, NoteAdapter.NoteHolder>(DIFF_CALLBACK) {
+
     private var listener: onItemClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteHolder {
         val itemView: View = LayoutInflater.from(parent.context)
@@ -27,13 +29,7 @@ class NoteAdapter : ListAdapter<Note, NoteAdapter.NoteHolder>(DIFF_CALLBACK) {
         holder.textViewDescription.text = currentNode.description
         holder.textViewPriority.text = currentNode.priority.toString()
         holder.textViewDateTime.text = currentNode.date
-        if (currentNode.priority == "High") {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#FF5722"))
-        } else if (currentNode.priority == "Medium") {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#FFC107"))
-        } else if (currentNode.priority == "Low") {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#4CAF50"))
-        }
+        holder.cardView.setCardBackgroundColor(Color.parseColor(currentNode.color))
     }
 
     fun getNoteAt(position: Int): Note? {

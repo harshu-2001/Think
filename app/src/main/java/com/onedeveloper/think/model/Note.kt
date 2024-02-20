@@ -10,7 +10,8 @@ class Note(
     @JvmField var priority: String?,
     @JvmField var priorityNumber: Int,
     @JvmField var date: String?,
-    @JvmField var time: String?
+    @JvmField var time: String?,
+    @JvmField var color:String?
 ) {
     @JvmField
     @PrimaryKey(autoGenerate = true)
