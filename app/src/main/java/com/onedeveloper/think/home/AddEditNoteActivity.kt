@@ -29,7 +29,7 @@ class AddEditNoteActivity : AppCompatActivity() {
     private var mCardView :LinearLayout ? =null
 
     //private String currentDate;
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_note)
         val calendar = Calendar.getInstance()
@@ -45,14 +45,14 @@ class AddEditNoteActivity : AppCompatActivity() {
         tvDate = findViewById<TextView>(R.id.tv_date)
         tvTime = findViewById<TextView>(R.id.tv_time)
         mCardView = findViewById(R.id.cardView)
-        getSupportActionBar()?.setHomeAsUpIndicator(R.drawable.ic_close)
-        val intent: Intent = getIntent()
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+        val intent: Intent = intent
         if (intent.hasExtra(EXTRA_ID)) {
-            setTitle("Edit Note")
+            title = "Edit Note"
             editTextTitle?.setText(intent.getStringExtra(EXTRA_TITLE))
             editTextDescription?.setText(intent.getStringExtra(EXTRA_DESCRIPTION))
-            tvDate?.setText(intent.getStringExtra(EXTRA_DATE))
-            tvTime?.setText(intent.getStringExtra(EXTRA_TIME))
+            tvDate?.text = intent.getStringExtra(EXTRA_DATE)
+            tvTime?.text = intent.getStringExtra(EXTRA_TIME)
 //            mCardView?.setBackgroundColor(Color.parseColor(intent.getStringExtra(EXTRA_COLOR)))
             //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.priorityList,R.layout.style_spinner);
             val array = arrayOf("High", "Medium", "Low")
@@ -61,9 +61,9 @@ class AddEditNoteActivity : AppCompatActivity() {
             spinnerPriority!!.adapter = adapter
             //spinnerPriority.setSelection(intent.getIntExtra(EXTRA_PRIORITY_NUMBER,1));
         } else {
-            setTitle("Add Note")
-            tvDate?.setText(date)
-            tvTime?.setText(time)
+            title = "Add Note"
+            tvDate?.text = date
+            tvTime?.text = time
             //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.priorityList,R.layout.style_spinner);
             val array = arrayOf("High", "Medium", "Low")
             val adapter: ArrayAdapter<String> =
@@ -74,11 +74,11 @@ class AddEditNoteActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-        val title: String = editTextTitle?.getText().toString()
-        val description: String = editTextDescription?.getText().toString()
+        val title: String = editTextTitle?.text.toString()
+        val description: String = editTextDescription?.text.toString()
         val priority = spinnerPriority!!.selectedItem.toString()
-        val date: String = tvDate?.getText().toString()
-        val time: String = tvTime?.getText().toString()
+        val date: String = tvDate?.text.toString()
+        val time: String = tvTime?.text.toString()
         val color:String = mCardView?.background.toString()
         if (title.trim { it <= ' ' }.isEmpty() || description.trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(this, "Please insert a title and description", Toast.LENGTH_SHORT).show()
@@ -101,7 +101,7 @@ class AddEditNoteActivity : AppCompatActivity() {
             priorityNumber = 1
         }
         data.putExtra(EXTRA_PRIORITY_NUMBER, priorityNumber)
-        val id: Int = getIntent().getIntExtra(EXTRA_ID, -1)
+        val id: Int = intent.getIntExtra(EXTRA_ID, -1)
         if (id != -1) {
             data.putExtra(EXTRA_ID, id)
         }
@@ -110,7 +110,7 @@ class AddEditNoteActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val menuInflater: MenuInflater = getMenuInflater()
+        val menuInflater: MenuInflater = menuInflater
         menuInflater.inflate(R.menu.add_note_menu, menu)
         return true
     }

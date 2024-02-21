@@ -32,10 +32,10 @@ abstract class SwipeToDeleteCallback(var mContext: Context) : ItemTouchHelper.Ca
         mClearPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
         deleteDrawable = ContextCompat.getDrawable(mContext, R.drawable.ic_delete)!!
         deleteDrawable2 = ContextCompat.getDrawable(mContext, R.drawable.ic_delete)!!
-        intrinsicWidth = deleteDrawable.getIntrinsicWidth()
-        intrinsicHeight = deleteDrawable.getIntrinsicHeight()
-        intrinsicWidth2 = deleteDrawable2.getIntrinsicWidth()
-        intrinsicHeight2 = deleteDrawable2.getIntrinsicHeight()
+        intrinsicWidth = deleteDrawable.intrinsicWidth
+        intrinsicHeight = deleteDrawable.intrinsicHeight
+        intrinsicWidth2 = deleteDrawable2.intrinsicWidth
+        intrinsicHeight2 = deleteDrawable2.intrinsicHeight
     }
 
     override fun getMovementFlags(
@@ -77,7 +77,7 @@ abstract class SwipeToDeleteCallback(var mContext: Context) : ItemTouchHelper.Ca
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             return
         }
-        mBackground.setColor(backgroundColor)
+        mBackground.color = backgroundColor
         mBackground.setBounds(itemView.left, itemView.top, itemView.right, itemView.bottom)
         mBackground.draw(c)
         val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
