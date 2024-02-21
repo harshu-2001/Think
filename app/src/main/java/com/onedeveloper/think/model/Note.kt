@@ -11,7 +11,6 @@ class Note(
     @JvmField var priorityNumber: Int,
     @JvmField var date: String?,
     @JvmField var time: String?,
-    @JvmField var color:String?
 ) {
     @JvmField
     @PrimaryKey(autoGenerate = true)

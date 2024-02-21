@@ -53,7 +53,7 @@ class AddEditNoteActivity : AppCompatActivity() {
             editTextDescription?.setText(intent.getStringExtra(EXTRA_DESCRIPTION))
             tvDate?.setText(intent.getStringExtra(EXTRA_DATE))
             tvTime?.setText(intent.getStringExtra(EXTRA_TIME))
-            mCardView?.setBackgroundColor(Color.parseColor(intent.getStringExtra(EXTRA_COLOR)))
+//            mCardView?.setBackgroundColor(Color.parseColor(intent.getStringExtra(EXTRA_COLOR)))
             //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.priorityList,R.layout.style_spinner);
             val array = arrayOf("High", "Medium", "Low")
             val adapter: ArrayAdapter<String> =
@@ -91,7 +91,7 @@ class AddEditNoteActivity : AppCompatActivity() {
         data.putExtra(EXTRA_PRIORITY_NUMBER, spinnerPriority!!.selectedItem.toString())
         data.putExtra(EXTRA_DATE, date)
         data.putExtra(EXTRA_TIME, time)
-        data.putExtra(EXTRA_COLOR,color)
+//        data.putExtra(EXTRA_COLOR,color)
         var priorityNumber = 0
         if (priority == "High") {
             priorityNumber = 3
@@ -134,6 +134,6 @@ class AddEditNoteActivity : AppCompatActivity() {
         const val EXTRA_PRIORITY_NUMBER = "com.example.counterexample.EXTRA_PRIORITY_NUMBER"
         const val EXTRA_DATE = "com.example.counterexample.EXTRA_DATE"
         const val EXTRA_TIME = "com.example.counterexample.EXTRA_TIME"
-        const val EXTRA_COLOR = "com.example.counterexample.EXTRA_COLOR"
+//        const val EXTRA_COLOR = "com.example.counterexample.EXTRA_COLOR"
     }
 }

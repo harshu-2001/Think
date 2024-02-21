@@ -40,7 +40,7 @@ abstract class NoteDatabase : RoomDatabase() {
             val ntime = timeFormat.format(calendar.time)
             val time = ntime.replace("am", "AM").replace("pm", "PM")
             val color = GlobalConstants.colors.random()
-            noteDao.insert(Note("Title 1", "Description 1", "High", 3, date, time,color))
+            noteDao.insert(Note("Title 1", "Description 1", "High", 3, date, time))
             return null
         }
 

@@ -26,7 +26,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.onedeveloper.think.R
 import com.onedeveloper.think.adapter.NoteAdapter
 import com.onedeveloper.think.adapter.NoteAdapter.onItemClickListener
-import com.onedeveloper.think.constants.GlobalConstants
 import com.onedeveloper.think.model.Note
 import com.onedeveloper.think.utilities.SwipeToDeleteCallback
 import com.onedeveloper.think.viewModel.NoteViewModel
@@ -36,7 +35,6 @@ import com.onedeveloper.think.viewModel.ViewModelFactory
 class MainActivity : AppCompatActivity() {
     private var noteViewModel: NoteViewModel? = null
     private var completeList: List<Note?>? = null
-    private var context: Context? =null
     var recyclerView: RecyclerView? = null
     var adapter: NoteAdapter? = null
     var sharedPreferences: SharedPreferences? = null
@@ -51,23 +49,23 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
             startActivityForResult(intent, Add_Note_Request)
         }
-        context = this
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView?.layoutManager = LinearLayoutManager(this)
         recyclerView?.setHasFixedSize(true)
-        adapter = NoteAdapter()
-        recyclerView?.adapter = adapter
+
         builder = MaterialAlertDialogBuilder(
             ContextThemeWrapper(this, R.style.AlertDialogCustom)
         )
 //        noteViewModel = ViewModelProvider(this)[NoteViewModel::class.java]
         noteViewModel = ViewModelProvider(this, ViewModelFactory(this.application))[NoteViewModel::class.java]
 
-
+        var flag =false
         noteViewModel?.getAllNotes()?.observe(this,
             Observer { notes ->
+                adapter = NoteAdapter(notes)
+                flag = true
+                recyclerView?.adapter = adapter
                 if(notes.isNullOrEmpty().not()){
-                    adapter!!.submitList(notes)
                     completeList?.toMutableList()?.addAll(ArrayList(notes))
                 }
             })
@@ -105,36 +103,38 @@ class MainActivity : AppCompatActivity() {
                 alert.show()
             }
         }).attachToRecyclerView(recyclerView)
-        adapter!!.setOnItemClickListener(object : onItemClickListener {
-            override fun onItemClick(note: Note?) {
-                val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
-                val title = note?.title
-                val description = note?.description
-                val priority = note?.priority
-                val date = note?.date
-                val time = note?.time
-                val color = note?.color
-                var priorityNumber = 0
-                if (priority == "High") {
-                    priorityNumber = 3
-                } else if (priority == "Medium") {
-                    priorityNumber = 2
-                } else if (priority == "Low") {
-                    priorityNumber = 1
+
+       if(flag) {
+            adapter!!.setOnItemClickListener(object : onItemClickListener {
+                override fun onItemClick(note: Note?) {
+                    val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
+                    val title = note?.title
+                    val description = note?.description
+                    val priority = note?.priority
+                    val date = note?.date
+                    val time = note?.time
+//                val color = note?.color
+                    var priorityNumber = 0
+                    if (priority == "High") {
+                        priorityNumber = 3
+                    } else if (priority == "Medium") {
+                        priorityNumber = 2
+                    } else if (priority == "Low") {
+                        priorityNumber = 1
+                    }
+                    val id = note?.id
+                    intent.putExtra(AddEditNoteActivity.EXTRA_TITLE, title)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_DESCRIPTION, description)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY, priority)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY_NUMBER, priorityNumber)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_ID, id)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_DATE, date)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_TIME, time)
+//                intent.putExtra(AddEditNoteActivity.EXTRA_COLOR,color)
+                    startActivityForResult(intent, Edit_Note_Request)
                 }
-                val id = note?.id
-                intent.putExtra(AddEditNoteActivity.EXTRA_TITLE, title)
-                intent.putExtra(AddEditNoteActivity.EXTRA_DESCRIPTION, description)
-                intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY, priority)
-                intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY_NUMBER, priorityNumber)
-                intent.putExtra(AddEditNoteActivity.EXTRA_ID, id)
-                intent.putExtra(AddEditNoteActivity.EXTRA_DATE, date)
-                intent.putExtra(AddEditNoteActivity.EXTRA_TIME, time)
-                intent.putExtra(AddEditNoteActivity.EXTRA_COLOR,color)
-                startActivityForResult(intent, Edit_Note_Request)
-            }
-        })
-    }
+            })
+        }    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             val priority = data.getStringExtra(AddEditNoteActivity.Companion.EXTRA_PRIORITY)
             val date = data.getStringExtra(AddEditNoteActivity.Companion.EXTRA_DATE)
             val time = data.getStringExtra(AddEditNoteActivity.Companion.EXTRA_TIME)
-            val color = data.getStringExtra(AddEditNoteActivity.EXTRA_COLOR)
+//            val color = data.getStringExtra(AddEditNoteActivity.EXTRA_COLOR)
             var priorityNumber = 0
             if (priority == "High") {
                 priorityNumber = 3
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
             } else if (priority == "Low") {
                 priorityNumber = 1
             }
-            val note = Note(title, description, priority, priorityNumber, date, time,color)
+            val note = Note(title, description, priority, priorityNumber, date, time)
             noteViewModel!!.insert(note)
             Toast.makeText(this, "Note saved successfully!", Toast.LENGTH_SHORT).show()
         } else if (requestCode == Edit_Note_Request && resultCode == RESULT_OK) {
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             val priority = data.getStringExtra(AddEditNoteActivity.EXTRA_PRIORITY)
             val date = data.getStringExtra(AddEditNoteActivity.EXTRA_DATE)
             val time = data.getStringExtra(AddEditNoteActivity.EXTRA_TIME)
-            val color = data.getStringExtra(AddEditNoteActivity.EXTRA_COLOR)
+//            val color = data.getStringExtra(AddEditNoteActivity.EXTRA_COLOR)
             var priorityNumber = 0
             if (priority == "High") {
                 priorityNumber = 3
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity() {
             } else if (priority == "Low") {
                 priorityNumber = 1
             }
-            val note = Note(title, description, priority, priorityNumber, date, time,color)
+            val note = Note(title, description, priority, priorityNumber, date, time)
             note.id = id
             noteViewModel!!.update(note)
             Toast.makeText(this, "Note updated Successfully", Toast.LENGTH_SHORT).show()
@@ -259,10 +259,9 @@ class MainActivity : AppCompatActivity() {
                             if (notes == null) {
                                 return
                             }
-                            //                        NoteAdapter adapter = new NoteAdapter();
-                            adapter!!.submitList(notes)
-                            //                        completeList = notes;
-//                        recyclerView.setAdapter(adapter);
+                            val adapter = NoteAdapter(notes)
+                            completeList = notes
+                            recyclerView?.adapter = adapter
                         }
                     })
             }
