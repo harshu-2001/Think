@@ -8,6 +8,18 @@ android {
     namespace = "com.onedeveloper.think"
     compileSdk = 34
 
+    signingConfigs {
+        val releaseKeyStoreFile = file("SignIn-Keystore/keystore.jks")
+        val releaseKeyStorePassword = "android"
+        val releaseKeyAlias = "onedeveloper"
+        val releaseKeyPassword = "android"
+        create("release") {
+            storeFile = releaseKeyStoreFile
+            storePassword = releaseKeyStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
+        }
+    }
     defaultConfig {
         applicationId = "com.onedeveloper.think"
         minSdk = 24
