@@ -7,8 +7,10 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.onedeveloper.think.R
+import com.onedeveloper.think.databinding.SplashscreenBinding
 
 class Splashscreen : AppCompatActivity() {
+    var binding :SplashscreenBinding? =null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -16,7 +18,8 @@ class Splashscreen : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-        setContentView(R.layout.splashscreen)
+        binding = SplashscreenBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
         supportActionBar?.hide()
         Handler().postDelayed({
             val homeIntent = Intent(this@Splashscreen, MainActivity::class.java)

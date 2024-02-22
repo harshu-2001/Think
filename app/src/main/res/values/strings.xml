@@ -3,6 +3,10 @@
     <string name="description">Description</string>
     <string name="title">Title</string>
     <string name="hint_text">Priority</string>
+    <string name="custom_app_name"><font fgcolor='#000000'>THI</font><font fgcolor = "#B0E9CA">N</font><font fgcolor='#000000'>K.</font></string>
+<!--    <string name="app_start_name"><font fgcolor='#000000'>THI</font></string>-->
+<!--    <string name="app_mid_name"><font fgcolor='#FF2FF309'>N</font></string>-->
+<!--    <string name="app_end_name"><font fgcolor='#000000'>K.</font></string>-->
     <string-array name="priorityList">
         <item>High</item>
         <item>Medium</item>

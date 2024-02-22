@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.onedeveloper.think.home
 
 import android.content.Intent
@@ -6,11 +8,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
@@ -19,11 +20,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.onedeveloper.think.R
 import com.onedeveloper.think.adapter.NoteAdapter
 import com.onedeveloper.think.constants.Requests
+import com.onedeveloper.think.databinding.ActivityMainBinding
 import com.onedeveloper.think.model.Note
 import com.onedeveloper.think.utilities.SwipeToDeleteCallback
 import com.onedeveloper.think.viewModel.NoteViewModel
@@ -35,20 +36,19 @@ class MainActivity : AppCompatActivity() {
     private var completeList: List<Note?>? = null
     var recyclerView: RecyclerView? = null
     var adapter: NoteAdapter? = null
-    var sharedPreferences: SharedPreferences? = null
-    var editor: SharedPreferences.Editor? = null
-    var isDarkModeOn = false
     var builder: MaterialAlertDialogBuilder? = null
+    var binding:ActivityMainBinding ? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val buttonAddNote = findViewById<FloatingActionButton>(R.id.button_add_note)
-        buttonAddNote.setOnClickListener {
+        setContentView(binding?.root)
+
+        binding?.buttonAddNote?.setOnClickListener {
             val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
             startActivityForResult(intent, Requests.ADD_NOTE.requestCode)
         }
-        recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        recyclerView = binding?.recyclerView
         recyclerView?.layoutManager = LinearLayoutManager(this)
         recyclerView?.setHasFixedSize(true)
 
@@ -57,44 +57,85 @@ class MainActivity : AppCompatActivity() {
         )
         noteViewModel = ViewModelProvider(this, ViewModelFactory(this.application))[NoteViewModel::class.java]
 
-        noteViewModel?.getAllNotes()?.observe(this,
-            Observer { notes ->
-                adapter = NoteAdapter(notes)
-                recyclerView?.adapter = adapter
-                if (notes.isNullOrEmpty().not()) {
-                    completeList?.toMutableList()?.addAll(ArrayList(notes))
-                }
-                adapter!!.setOnItemClickListener(object : NoteAdapter.onItemClickListener {
-                    override fun onItemClick(note: Note?) {
-                        val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
-                        val title = note?.title
-                        val description = note?.description
-                        val priority = note?.priority
-                        val date = note?.date
-                        val time = note?.time
+        noteViewModel?.getAllNotes()?.observe(this
+        ) { notes ->
+            adapter = NoteAdapter(notes)
+            recyclerView?.adapter = adapter
+            if (notes.isNullOrEmpty().not()) {
+                completeList?.toMutableList()?.addAll(ArrayList(notes))
+            }
+            adapter!!.setOnItemClickListener(object : NoteAdapter.onItemClickListener {
+                override fun onItemClick(note: Note?) {
+                    val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
+                    val title = note?.title
+                    val description = note?.description
+                    val priority = note?.priority
+                    val date = note?.date
+                    val time = note?.time
 //                val color = note?.color
-                        var priorityNumber = 0
-                        if (priority == "High") {
-                            priorityNumber = 3
-                        } else if (priority == "Medium") {
-                            priorityNumber = 2
-                        } else if (priority == "Low") {
-                            priorityNumber = 1
-                        }
-                        val id = note?.id
-                        intent.putExtra(AddEditNoteActivity.EXTRA_TITLE, title)
-                        intent.putExtra(AddEditNoteActivity.EXTRA_DESCRIPTION, description)
-                        intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY, priority)
-                        intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY_NUMBER, priorityNumber)
-                        intent.putExtra(AddEditNoteActivity.EXTRA_ID, id)
-                        intent.putExtra(AddEditNoteActivity.EXTRA_DATE, date)
-                        intent.putExtra(AddEditNoteActivity.EXTRA_TIME, time)
-//                intent.putExtra(AddEditNoteActivity.EXTRA_COLOR,color)
-                        startActivityForResult(intent, Requests.EDIT_NOTE.requestCode)
+                    var priorityNumber = 0
+                    if (priority == "High") {
+                        priorityNumber = 3
+                    } else if (priority == "Medium") {
+                        priorityNumber = 2
+                    } else if (priority == "Low") {
+                        priorityNumber = 1
                     }
-                })
-
+                    val id = note?.id
+                    intent.putExtra(AddEditNoteActivity.EXTRA_TITLE, title)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_DESCRIPTION, description)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY, priority)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY_NUMBER, priorityNumber)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_ID, id)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_DATE, date)
+                    intent.putExtra(AddEditNoteActivity.EXTRA_TIME, time)
+//                intent.putExtra(AddEditNoteActivity.EXTRA_COLOR,color)
+                    startActivityForResult(intent, Requests.EDIT_NOTE.requestCode)
+                }
             })
+
+        }
+
+        binding?.searchBar?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                if(query.isEmpty().not()){
+                    binding?.searchText?.visibility = View.GONE
+                }
+                else{
+                    binding?.searchText?.visibility = View.VISIBLE
+                }
+                getNotesFromDb(query)
+                return false
+            }
+
+            private fun getNotesFromDb(searchText: String) {
+                var searchText = searchText
+                searchText = "%$searchText%"
+                noteViewModel!!.getSearchedNotes(searchText)!!
+                    .observe(this@MainActivity, object : Observer<List<Note?>?> {
+                        override fun onChanged(value: List<Note?>?) {
+                            if (value == null) {
+                                return
+                            }
+                            val adapter = NoteAdapter(value)
+                            completeList = value
+                            recyclerView?.adapter = adapter
+                        }
+                    })
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                if(newText.isEmpty().not()){
+                    binding?.searchText?.visibility = View.GONE
+                }
+                else{
+                    binding?.searchText?.visibility = View.VISIBLE
+                }
+                getNotesFromDb(newText)
+                return false
+            }
+        })
+
         ItemTouchHelper(object : SwipeToDeleteCallback(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 builder!!.background = resources.getDrawable(R.drawable.alert_shape,theme)
@@ -104,11 +145,9 @@ class MainActivity : AppCompatActivity() {
                     .setPositiveButton("Yes") { dialog, id ->
                         val adapterPosition = viewHolder.adapterPosition
                         val mNote = adapter!!.getNoteAt(adapterPosition)
-                        val viewPos = findViewById<View>(R.id.myCoordinatorLayout)
                         val snackbar = Snackbar
                             .make(recyclerView!!, "Note Deleted", Snackbar.LENGTH_LONG)
                             .setAction("UNDO") {
-                                val mAdapterPosition = viewHolder.adapterPosition
                                 noteViewModel!!.insert(mNote)
                             }
                         snackbar.setActionTextColor(resources.getColor(R.color.primaryLightColor))
@@ -129,6 +168,14 @@ class MainActivity : AppCompatActivity() {
                 alert.show()
             }
         }).attachToRecyclerView(recyclerView)
+
+        binding?.toolbar?.setOnMenuItemClickListener{
+            if(it.itemId == R.id.delete_all_notes){
+                noteViewModel!!.deleteAllNotes()
+                Toast.makeText(this@MainActivity, "All Notes Deleted!", Toast.LENGTH_SHORT).show()
+            }
+            false
+        }
 
 
         }
@@ -164,7 +211,6 @@ class MainActivity : AppCompatActivity() {
             val priority = data.getStringExtra(AddEditNoteActivity.EXTRA_PRIORITY)
             val date = data.getStringExtra(AddEditNoteActivity.EXTRA_DATE)
             val time = data.getStringExtra(AddEditNoteActivity.EXTRA_TIME)
-//            val color = data.getStringExtra(AddEditNoteActivity.EXTRA_COLOR)
             var priorityNumber = 0
             if (priority == "High") {
                 priorityNumber = 3
@@ -178,99 +224,8 @@ class MainActivity : AppCompatActivity() {
             noteViewModel!!.update(note)
             Toast.makeText(this, "Note updated Successfully", Toast.LENGTH_SHORT).show()
         }
-        else {
-            Toast.makeText(this, "Note not saved!", Toast.LENGTH_SHORT).show()
-        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.main_menu, menu)
-        sharedPreferences = getSharedPreferences(
-            "sharedPrefs", MODE_PRIVATE
-        )
-        editor = sharedPreferences!!.edit()
-        isDarkModeOn = sharedPreferences!!
-            .getBoolean(
-                "isDarkModeOn", false
-            )
-        val searchItem = menu.findItem(R.id.action_search)
-        val searchView = searchItem.actionView as SearchView?
-        val nightMode = menu.findItem(R.id.night_mode)
-        val dayMode = menu.findItem(R.id.day_mode)
-        if (isDarkModeOn) {
-            AppCompatDelegate
-                .setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_YES
-                )
-            dayMode.isVisible = true
-            nightMode.isVisible = false
-        } else {
-            AppCompatDelegate
-                .setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_NO
-                )
-            dayMode.isVisible = false
-            nightMode.isVisible = true
-        }
-        nightMode.setOnMenuItemClickListener {
-            AppCompatDelegate
-                .setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_YES
-                )
-            editor!!.putBoolean(
-                "isDarkModeOn", true
-            )
-            editor!!.apply()
-            Toast.makeText(applicationContext, "Dark Mode On ", Toast.LENGTH_SHORT).show()
-            dayMode.isVisible = true
-            nightMode.isVisible = false
-            true
-        }
-        dayMode.setOnMenuItemClickListener {
-            AppCompatDelegate
-                .setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_NO
-                )
-            editor!!.putBoolean(
-                "isDarkModeOn", false
-            )
-            editor!!.apply()
-            Toast.makeText(applicationContext, "Dark Mode Off", Toast.LENGTH_SHORT).show()
-            dayMode.isVisible = false
-            nightMode.isVisible = true
-            true
-        }
-        searchView!!.imeOptions = EditorInfo.IME_ACTION_DONE
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                getNotesFromDb(query)
-                return false
-            }
-
-            private fun getNotesFromDb(searchText: String) {
-                var searchText = searchText
-                searchText = "%$searchText%"
-                noteViewModel!!.getSearchedNotes(searchText)!!
-                    .observe(this@MainActivity, object : Observer<List<Note?>?> {
-                        override fun onChanged(value: List<Note?>?) {
-                            if (value == null) {
-                                return
-                            }
-                            val adapter = NoteAdapter(value)
-                            completeList = value
-                            recyclerView?.adapter = adapter
-                        }
-                    })
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                getNotesFromDb(newText)
-                return false
-            }
-        })
-        return true
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

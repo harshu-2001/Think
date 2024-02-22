@@ -3,14 +3,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <!--?xml version="1.0" encoding="UTF-8"?-->
-    <color name="primaryColor">#D7BCE8</color>
-    <color name="primaryLightColor">#FDE2FF</color>
-    <color name="primaryDarkColor">#5D576B</color>
+    <color name="primaryColor">#3C864D</color>
+    <color name="primaryLightColor">#B0E9CA</color>
+    <color name="primaryDarkColor">#173905</color>
     <color name="primaryTextColor">#000000</color>
     <color name="modeColor">#ffffff</color>
     <color name="backColor">#ffffff</color>
-    <color name="dialogueBtn">#5D576B</color>
-    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#8884FF</color>
+    <color name="dialogueBtn">#4EAD71</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#4EAD71</color>
     <color name="color_1">#aec7e8</color>
     <color name="color_2">#ffbb78</color>
     <color name="color_3">#98df8a</color>
