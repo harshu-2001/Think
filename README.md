@@ -2,7 +2,7 @@
 Think is not just a notes app; it's your portable repository of thoughts. Seamlessly jot down ideas, reminders, and insights. With intuitive search functionality, find notes instantly. Enjoy the convenience of offline access, ensuring your ideas are at your fingertips wherever you go. Think simplifies your life, offering a powerful combination of note-taking and accessibility. Download Think now to streamline your thoughts and access your notes anytime, anywhere.
 
 # App Link
-Link - ![App Link](https://apkpure.net/group/com.onedeveloper.think)
+Link - https://apkpure.net/group/com.onedeveloper.think
 
 # ScreenShots
 
